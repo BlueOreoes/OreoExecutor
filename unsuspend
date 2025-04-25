@@ -1,6 +1,6 @@
-    if typeof(onVoiceModerated) ~= "RBXScriptConnection" then
+if typeof(onVoiceModerated) ~= "RBXScriptConnection" then
         onVoiceModerated = cloneref(game:GetService("VoiceChatInternal")).LocalPlayerModerated:Connect(function()
-            task.wait(1)
-            VoiceChatService:joinVoice()
-        end)
-    end
+        task.wait(1)
+        VoiceChatService:joinVoice()
+    end)
+end
