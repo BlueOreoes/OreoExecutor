@@ -39,4 +39,3 @@ del /f /q OreoExecutor.zip
 rmdir /s /q "%cd%\OreoExecutor-main"
 
 echo Download complete and files have been copied. Cleanup complete.
-pause
