@@ -213,9 +213,6 @@ getgenv().ESPUpdateLoop = RunService.RenderStepped:Connect(function()
 end)
 
 
---Rejoin After 20 minutes
-task.spawn(function() task.wait(1200) local h,g,p=game:GetService("HttpService"),game:GetService("TeleportService"),game.Players.LocalPlayer local s,c=pcall(function() return h:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/"..game.PlaceId.."/servers/Public?sortOrder=Desc&limit=100")).data end) if s and c then for _,v in ipairs(c) do if v.playing < v.maxPlayers and v.id ~= game.JobId then pcall(function() pcall(function() g:TeleportToPlaceInstance(game.PlaceId,v.id,p) end) end) break end end end end)
-
 -- Target validation
 local function isValidTarget(player)
 	if not player or player == plr or not player.Character then return false end
@@ -268,22 +265,7 @@ getgenv().AimLockLoop = RunService.RenderStepped:Connect(function()
         lastTarget = lockedTarget
         targetStartTime = tick()
     elseif tick() - targetStartTime >= 20 then
-        -- Kill local player if locked target has stayed the same for 20 seconds
-        local char = plr.Character
-        local humanoid = char and char:FindFirstChildOfClass("Humanoid")
-        if humanoid then
-            humanoid.Health = 0
-        end
-    end
-
-
-		if lockedTarget and lockedTarget.Character and lockedTarget.Character:FindFirstChild(AimPart) then
-			local root = lockedTarget.Character[AimPart]
-			local predicted = root.Position + root.Velocity * Epitaph + HeadOffset
-			local screenPos = camera:WorldToViewportPoint(predicted)
-			local aimPoint = Vector2.new(screenPos.X, screenPos.Y) + screenOffset
-			local ray = camera:ViewportPointToRay(aimPoint.X, aimPoint.Y)
-			camera.CFrame = CFrame.lookAt(camera.CFrame.Position, ray.Origin + ray.Direction * 100)
+        -- Kill local player if locked ta//rame.lookAt(camera.CFrame.Position, ray.Origin + ray.Direction * 100)
 			UIS.MouseBehavior = Enum.MouseBehavior.LockCenter
 		end
 	end
