@@ -478,10 +478,8 @@ plr.CharacterAdded:Connect(function(char)
         end
 		isHoldingRightClick = true
 		holdingF = true
-
-		Flying = true
+        startFlying()
 		
-		startFlying()
 
 		if not isHoldingRightClick then
 			lockedTarget = nil
