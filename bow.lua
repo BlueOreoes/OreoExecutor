@@ -1,5 +1,5 @@
 -- Multi-Execution Cleanup
-wait(5)
+wait(15)
 for _, connName in pairs({
 	"AimLockLoop", "AimLockInputStart", "AimLockInputEnd",
 	"ArrowInputStart", "ArrowInputEnd", "ESPUpdateLoop",
