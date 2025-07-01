@@ -200,6 +200,21 @@ getgenv().ESPUpdateLoop = RunService.RenderStepped:Connect(function()
 	end
 end)
 
+-- Teleport to new server if locked target gets too far away
+if lockedTarget and isValidTarget(lockedTarget) then
+	local distance = (camera.CFrame.Position - lockedTarget.Character[AimPart].Position).Magnitude
+	if distance > 2000 then
+		local servers = HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/"..game.PlaceId.."/servers/Public?sortOrder=Desc&limit=100")).data
+		for _, s in ipairs(servers) do
+			if s.playing < s.maxPlayers and s.id ~= game.JobId then
+				TPService:TeleportToPlaceInstance(game.PlaceId, s.id, LP)
+				break
+			end
+		end
+		return -- stop execution for this frame
+	end
+end
+
 -- Target validation
 local function isValidTarget(player)
 	if not player or player == plr or not player.Character then return false end
