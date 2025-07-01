@@ -291,7 +291,7 @@ getgenv().AimLockLoop = RunService.RenderStepped:Connect(function()
                     spinningStartTime = tick()
                 else
                     local elapsed = tick() - spinningStartTime
-                    if elapsed >= 10 then
+                    if elapsed >= 30 then
                         task.spawn(function() task.wait(1) local h,g,p=game:GetService("HttpService"),game:GetService("TeleportService"),game.Players.LocalPlayer local s,c=pcall(function() return h:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/"..game.PlaceId.."/servers/Public?sortOrder=Desc&limit=100")).data end) if s and c then for _,v in ipairs(c) do if v.playing < v.maxPlayers and v.id ~= game.JobId then pcall(function() pcall(function() g:TeleportToPlaceInstance(game.PlaceId,v.id,p) end) end) break end end end end)
                         -- Run your code here (only once, unless you want it repeated)
                         
