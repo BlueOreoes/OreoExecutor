@@ -461,6 +461,17 @@ FOVCircle.NumSides = 64
 FOVCircle.Thickness = 1
 getgenv().FOVCircle = FOVCircle
 
+-- Cleanup ESP when players leave
+Players.PlayerRemoving:Connect(function(player)
+	removeESPBox(player)
+end)
+-- Cleanup ESP and aimlock target if player leaves
+Players.PlayerRemoving:Connect(function(player)
+	removeESPBox(player)
+	if lockedTarget == player then
+		lockedTarget = nil
+	end
+end)
 
 -- Handle player death and re-trigger J key logic on respawn
 -- Simulate J key press twice on respawn
