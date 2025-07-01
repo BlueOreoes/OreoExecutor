@@ -470,9 +470,6 @@ plr.CharacterAdded:Connect(function(char)
 
 	-- Simulate two presses of the J key
 	for _ = 1, 2 do
-	
-	    stopFlying()
-	    wait(1)
 	    if humanoid then
             humanoid.Jump = true
         end
