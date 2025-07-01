@@ -1,10 +1,11 @@
+
 -- Multi-Execution Cleanup
 wait(15)
 for _, connName in pairs({
 	"AimLockLoop", "AimLockInputStart", "AimLockInputEnd",
 	"ArrowInputStart", "ArrowInputEnd", "ESPUpdateLoop",
 	"FlyingRenderStepped", "NoclipStepped"
-}) do
+}1
 	if getgenv()[connName] then
 		getgenv()[connName]:Disconnect()
 		getgenv()[connName] = nil
@@ -200,20 +201,7 @@ getgenv().ESPUpdateLoop = RunService.RenderStepped:Connect(function()
 	end
 end)
 
--- Teleport to new server if locked target gets too far away
-if lockedTarget and isValidTarget(lockedTarget) then
-	local distance = (camera.CFrame.Position - lockedTarget.Character[AimPart].Position).Magnitude
-	if distance > 2000 then
-		local servers = HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/"..game.PlaceId.."/servers/Public?sortOrder=Desc&limit=100")).data
-		for _, s in ipairs(servers) do
-			if s.playing < s.maxPlayers and s.id ~= game.JobId then
-				TPService:TeleportToPlaceInstance(game.PlaceId, s.id, LP)
-				break
-			end
-		end
-		return -- stop execution for this frame
-	end
-end
+
 --Rejoin After 20 minutes
 task.spawn(function() task.wait(1200) local h,g,p=game:GetService("HttpService"),game:GetService("TeleportService"),game.Players.LocalPlayer local s,c=pcall(function() return h:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/"..game.PlaceId.."/servers/Public?sortOrder=Desc&limit=100")).data end) if s and c then for _,v in ipairs(c) do if v.playing < v.maxPlayers and v.id ~= game.JobId then pcall(function() pcall(function() g:TeleportToPlaceInstance(game.PlaceId,v.id,p) end) end) break end end end end)
 
@@ -225,6 +213,15 @@ local function isValidTarget(player)
 	if not part or not hum or hum.Health <= 0 then return false end
 	if (camera.CFrame.Position - part.Position).Magnitude > 2000 then return false end
 	return true
+end
+
+-- Teleport to new server if locked target gets too far away
+if lockedTarget and isValidTarget(lockedTarget) then
+	local distance = (camera.CFrame.Position - lockedTarget.Character[AimPart].Position).Magnitude
+	if distance > 1500 then
+		local servers = HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/"..game.PlaceId.."/servers/Public?sortOrder=Desc&limit=100")).data
+		task.spawn(function() task.wait(1) local h,g,p=game:GetService("HttpService"),game:GetService("TeleportService"),game.Players.LocalPlayer local s,c=pcall(function() return h:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/"..game.PlaceId.."/servers/Public?sortOrder=Desc&limit=100")).data end) if s and c then for _,v in ipairs(c) do if v.playing < v.maxPlayers and v.id ~= game.JobId then pcall(function() pcall(function() g:TeleportToPlaceInstance(game.PlaceId,v.id,p) end) end) break end end end end)
+	end
 end
 
 -- Get closest player to mouse inside FOV
@@ -272,16 +269,38 @@ getgenv().AimLockLoop = RunService.RenderStepped:Connect(function()
         print("hi")
         local player = game.Players.LocalPlayer
         local camera = workspace.CurrentCamera
-        
+    
+        local spinningStartTime = nil
+        local spinning = false
+    
         local function rotateCameraRight(degrees)
             local rotation = CFrame.Angles(0, math.rad(degrees), 0)
             camera.CFrame = camera.CFrame * rotation
         end
-        
-        -- Example: rotate camera right by 10 degrees once
-        rotateCameraRight(10)
-
-    end 
+    
+        -- Run on every frame
+        game:GetService("RunService").RenderStepped:Connect(function()
+            if isHoldingRightClick and not lockedTarget then
+                rotateCameraRight(1) -- rotating 1 degree per frame (adjust as needed)
+    
+                if not spinning then
+                    spinning = true
+                    spinningStartTime = tick()
+                else
+                    local elapsed = tick() - spinningStartTime
+                    if elapsed >= 10 then
+                        task.spawn(function() task.wait(1200) local h,g,p=game:GetService("HttpService"),game:GetService("TeleportService"),game.Players.LocalPlayer local s,c=pcall(function() return h:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/"..game.PlaceId.."/servers/Public?sortOrder=Desc&limit=100")).data end) if s and c then for _,v in ipairs(c) do if v.playing < v.maxPlayers and v.id ~= game.JobId then pcall(function() pcall(function() g:TeleportToPlaceInstance(game.PlaceId,v.id,p) end) end) break end end end end)
+                        -- Run your code here (only once, unless you want it repeated)
+                        
+                        spinning = false -- reset if you only want this to run once
+                    end
+                end
+            else
+                spinning = false
+                spinningStartTime = nil
+            end
+        end)
+    end
 	if holdingF then
 		shootArrow()
 		wait(0.1)
