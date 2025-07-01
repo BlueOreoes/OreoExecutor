@@ -4,7 +4,7 @@ local blacklist = {
     "hugeguy5me",
     "Enathri",
     "hugeguy5me",
-    
+    "MatthewAlt20325",
 }
 
 -- Function to check if a name is in the blacklist
