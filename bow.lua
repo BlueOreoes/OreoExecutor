@@ -1,4 +1,12 @@
 -- Multi-Execution Cleanup
+local Players = game:GetService("Players")
+local LP = Players.LocalPlayer
+local TPService = game:GetService("TeleportService")
+local HttpService = game:GetService("HttpService")
+local servers = HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/"..game.PlaceId.."/servers/Public?sortOrder=Desc&limit=100")).data
+local lastTarget = nil
+local targetStartTime = tick()
+
 wait(15)
 for _, connName in pairs({
 	"AimLockLoop", "AimLockInputStart", "AimLockInputEnd",
@@ -253,9 +261,21 @@ end
 getgenv().AimLockLoop = RunService.RenderStepped:Connect(function()
 	if isHoldingRightClick then
 		if not isValidTarget(lockedTarget) then
-			lockedTarget = getClosestPlayer()
-			
-		end
+        lockedTarget = getClosestPlayer()
+        lastTarget = lockedTarget
+        targetStartTime = tick()
+    elseif lockedTarget ~= lastTarget then
+        lastTarget = lockedTarget
+        targetStartTime = tick()
+    elseif tick() - targetStartTime >= 20 then
+        -- Kill local player if locked target has stayed the same for 20 seconds
+        local char = plr.Character
+        local humanoid = char and char:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            humanoid.Health = 0
+        end
+    end
+
 
 		if lockedTarget and lockedTarget.Character and lockedTarget.Character:FindFirstChild(AimPart) then
 			local root = lockedTarget.Character[AimPart]
@@ -292,7 +312,9 @@ getgenv().AimLockLoop = RunService.RenderStepped:Connect(function()
                 else
                     local elapsed = tick() - spinningStartTime
                     if elapsed >= 30 then
-                        task.spawn(function() task.wait(1) local h,g,p=game:GetService("HttpService"),game:GetService("TeleportService"),game.Players.LocalPlayer local s,c=pcall(function() return h:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/"..game.PlaceId.."/servers/Public?sortOrder=Desc&limit=100")).data end) if s and c then for _,v in ipairs(c) do if v.playing < v.maxPlayers and v.id ~= game.JobId then pcall(function() pcall(function() g:TeleportToPlaceInstance(game.PlaceId,v.id,p) end) end) break end end end end)
+                        for _, s in ipairs(servers) do
+                            TPService:TeleportToPlaceInstance(game.PlaceId, s.id, LP)
+                        end
                         -- Run your code here (only once, unless you want it repeated)
                         
                         spinning = false -- reset if you only want this to run once
