@@ -148,6 +148,9 @@ local function shootArrow()
 	if fired and fired:IsA("RemoteEvent") then
 		fired:FireServer()
 	end
+	
+	local VirtualInputManager = game:GetService("VirtualInputManager")
+    VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.2)
 end
 
 -- ESP Helpers
