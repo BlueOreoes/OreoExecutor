@@ -479,30 +479,26 @@ plr.CharacterAdded:Connect(function(char)
 	char:WaitForChild("HumanoidRootPart") -- wait for character to fully load
 	task.wait(1)
     game:GetService("ReplicatedStorage").RemoteEvents.EquipBow:FireServer()
-	-- Simulate two presses of the J key
-	for _ = 1, 2 do
-	       
-	    stopFlying()
-	    isHoldingRightClick = false
-		holdingF = false
-	    wait(1)
-	    if humanoid then
-            humanoid.Jump = true
-        end
-		isHoldingRightClick = true
-		holdingF = true
-        startFlying()
+	stopFlying()
+    isHoldingRightClick = false
+    holdingF = false
+	wait(1)
+	if humanoid then
+        humanoid.Jump = true
+    end
+	isHoldingRightClick = true
+	holdingF = true
+    startFlying()
 		
 
-		if not isHoldingRightClick then
-			lockedTarget = nil
-			UIS.MouseBehavior = Enum.MouseBehavior.Default
-		else
-			lockedTarget = nil
-		end
-
-		wait(0.2)
+	if not isHoldingRightClick then
+		lockedTarget = nil
+		UIS.MouseBehavior = Enum.MouseBehavior.Default
+	else
+		lockedTarget = nil
 	end
+
+	wait(0.2)
 end)
 
 
