@@ -25,7 +25,7 @@ local Players = game:GetService("Players")
 local plr = Players.LocalPlayer
 local char = plr.Character or plr.CharacterAdded:Wait()
 local hrp = char:WaitForChild("HumanoidRootPart")
-
+local private = false
 local duration = 2 -- total time to move
 local stepTime = 0.05 -- how often to teleport (seconds)
 local stepSize = 2 -- how far to teleport each step (studs)
@@ -150,7 +150,7 @@ local function shootArrow()
 	end
 	
 	local VirtualInputManager = game:GetService("VirtualInputManager")
-    VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.2)
+    VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Two, false, game)
 end
 
 -- ESP Helpers
@@ -444,8 +444,10 @@ task.spawn(function()
 			local servers = HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/"..game.PlaceId.."/servers/Public?sortOrder=Desc&limit=100")).data
 			for _, s in ipairs(servers) do
 				if s.playing < s.maxPlayers and s.id ~= game.JobId then
-					TPService:TeleportToPlaceInstance(game.PlaceId, s.id, LP)
-					break
+				    if private == false then
+					    TPService:TeleportToPlaceInstance(game.PlaceId, s.id, LP)
+					    break
+					end
 				end
 			end
 		end
@@ -500,15 +502,13 @@ FOVCircle.NumSides = 64
 FOVCircle.Thickness = 1
 getgenv().FOVCircle = FOVCircle
 
--- Cleanup ESP when players leave
-Players.PlayerRemoving:Connect(function(player)
-	removeESPBox(player)
-end)
--- Cleanup ESP and aimlock target if player leaves
 Players.PlayerRemoving:Connect(function(player)
 	removeESPBox(player)
 	if lockedTarget == player then
 		lockedTarget = nil
+		if isHoldingRightClick then
+			lockedTarget = getClosestPlayer()
+		end
 	end
 end)
 
