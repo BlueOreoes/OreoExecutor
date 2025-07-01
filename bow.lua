@@ -254,32 +254,17 @@ getgenv().AimLockLoop = RunService.RenderStepped:Connect(function()
     if isHoldingRightClick and not lockedTarget then
         print("hi")
         local player = game.Players.LocalPlayer
-        local character = player.Character or player.CharacterAdded:Wait()
-        local humanoid = character:FindFirstChildOfClass("Humanoid")
         local camera = workspace.CurrentCamera
-    
-        local spinning = true
-    
+        
         local function rotateCameraRight(degrees)
             local rotation = CFrame.Angles(0, math.rad(degrees), 0)
             camera.CFrame = camera.CFrame * rotation
         end
-    
-        -- Spin for 10 seconds
-        task.spawn(function()
-            local startTime = tick()
-            while spinning and tick() - startTime < 10 do
-                rotateCameraRight(2) -- Adjust rotation speed here
-                task.wait(0.05) -- Adjust frame delay here
-            end
-    
-            -- Kill the player after spinning
-            if humanoid and humanoid.Health > 0 then
-                humanoid.Health = 0
-            end
-        end)
-    end
+        
+        -- Example: rotate camera right by 10 degrees once
+        rotateCameraRight(10)
 
+    end 
 	if holdingF then
 		shootArrow()
 		wait(0.1)
@@ -482,11 +467,13 @@ getgenv().FOVCircle = FOVCircle
 plr.CharacterAdded:Connect(function(char)
 	char:WaitForChild("HumanoidRootPart") -- wait for character to fully load
 	task.wait(1)
-
+    game:GetService("ReplicatedStorage").RemoteEvents.EquipBow:FireServer()
 	-- Simulate two presses of the J key
 	for _ = 1, 2 do
-	
+	       
 	    stopFlying()
+	    isHoldingRightClick = false
+		holdingF = false
 	    wait(1)
 	    if humanoid then
             humanoid.Jump = true
