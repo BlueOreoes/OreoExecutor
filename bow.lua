@@ -254,17 +254,32 @@ getgenv().AimLockLoop = RunService.RenderStepped:Connect(function()
     if isHoldingRightClick and not lockedTarget then
         print("hi")
         local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
         local camera = workspace.CurrentCamera
-        
+    
+        local spinning = true
+    
         local function rotateCameraRight(degrees)
             local rotation = CFrame.Angles(0, math.rad(degrees), 0)
             camera.CFrame = camera.CFrame * rotation
         end
-        
-        -- Example: rotate camera right by 10 degrees once
-        rotateCameraRight(10)
+    
+        -- Spin for 10 seconds
+        task.spawn(function()
+            local startTime = tick()
+            while spinning and tick() - startTime < 10 do
+                rotateCameraRight(2) -- Adjust rotation speed here
+                task.wait(0.05) -- Adjust frame delay here
+            end
+    
+            -- Kill the player after spinning
+            if humanoid and humanoid.Health > 0 then
+                humanoid.Health = 0
+            end
+        end)
+    end
 
-    end 
 	if holdingF then
 		shootArrow()
 		wait(0.1)
@@ -301,67 +316,32 @@ local function startFlying()
 	bg.CFrame = hrp.CFrame
 	bg.Parent = hrp
 
-	local previousDistance = nil
-    local movingAwayCounter = 0
-    local maxWrongDirectionTicks = 60 -- adjust based on how tolerant you want it to be
-    
-    getgenv().FlyingRenderStepped = RunService.RenderStepped:Connect(function()
-    	if not flying or not bv or not bv.Parent then return end
-    
-    	local char = getCharacter()
-    	local hrp = char:FindFirstChild("HumanoidRootPart")
-    	if not hrp then return end
-    
-    	if lockedTarget and isValidTarget(lockedTarget) then
-    		local targetPos = lockedTarget.Character[AimPart].Position
-    		local direction = (targetPos - hrp.Position).Unit
-    		bv.Velocity = direction * flyingSpeed
-    		bg.CFrame = CFrame.new(hrp.Position, targetPos)
-    
-    		-- Check if flying away from target
-    		local currentDistance = (hrp.Position - targetPos).Magnitude
-    		if previousDistance then
-    			if currentDistance > previousDistance + 1 then -- +1 buffer to avoid jitter
-    				movingAwayCounter = movingAwayCounter + 1
-    			else
-    				movingAwayCounter = 0 -- reset if moving correctly
-    			end
-    
-    			if movingAwayCounter >= maxWrongDirectionTicks then
-    				-- Join a new server
-    				task.spawn(function()
-    					local HttpService = game:GetService("HttpService")
-    					local TPService = game:GetService("TeleportService")
-    					local servers = HttpService:JSONDecode(
-    						game:HttpGet("https://games.roblox.com/v1/games/"..game.PlaceId.."/servers/Public?sortOrder=Desc&limit=100")
-    					).data
-    					for _, s in ipairs(servers) do
-    						if s.playing < s.maxPlayers and s.id ~= game.JobId then
-    							TPService:TeleportToPlaceInstance(game.PlaceId, s.id, plr)
-    							break
-    						end
-    					end
-    				end)
-    				return
-    			end
-    		end
-    		previousDistance = currentDistance
-    	else
-    		bv.Velocity = Vector3.new(0, 0, 0)
-    		movingAwayCounter = 0
-    	end
-    
-    	noclipCharacter()
-    
-    	-- Optional: keep torso facing HRP direction
-    	local torso = char:FindFirstChild("UpperTorso") or char:FindFirstChild("Torso")
-    	if torso and hrp then
-    		local torsoPos = torso.Position
-    		local hrpLook = hrp.CFrame.LookVector
-    		torso.CFrame = CFrame.new(torsoPos, torsoPos + hrpLook)
-    	end
-    end)
+	getgenv().FlyingRenderStepped = RunService.RenderStepped:Connect(function()
+		if not flying or not bv or not bv.Parent then return end
 
+		if lockedTarget and isValidTarget(lockedTarget) and hrp then
+			local targetPos = lockedTarget.Character[AimPart].Position
+			local direction = (targetPos - hrp.Position).Unit
+			bv.Velocity = direction * flyingSpeed
+			bg.CFrame = CFrame.new(hrp.Position, targetPos)
+		else
+			bv.Velocity = Vector3.new(0, 0, 0)
+		end
+
+		-- Keep noclip active
+		noclipCharacter()
+
+		-- Fix torso rotation caused by bow (keep torso facing HRP direction)
+		local char = plr.Character
+		if char then
+			local torso = char:FindFirstChild("UpperTorso") or char:FindFirstChild("Torso")
+			if torso and hrp then
+				local torsoPos = torso.Position
+				local hrpLook = hrp.CFrame.LookVector
+				torso.CFrame = CFrame.new(torsoPos, torsoPos + hrpLook)
+			end
+		end
+	end)
 end
 
 local function stopFlying()
