@@ -482,9 +482,9 @@ plr.CharacterAdded:Connect(function(char)
 	stopFlying()
     isHoldingRightClick = false
     holdingF = false
-    hrp.Anchored = true
+    char.Anchored = true
 	wait(1)
-	hrp.Anchored = false
+	char.Anchored = false
 	if humanoid then
         humanoid.Jump = true
     end
