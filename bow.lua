@@ -1,11 +1,10 @@
-
 -- Multi-Execution Cleanup
 wait(15)
 for _, connName in pairs({
 	"AimLockLoop", "AimLockInputStart", "AimLockInputEnd",
 	"ArrowInputStart", "ArrowInputEnd", "ESPUpdateLoop",
 	"FlyingRenderStepped", "NoclipStepped"
-}1
+}) do
 	if getgenv()[connName] then
 		getgenv()[connName]:Disconnect()
 		getgenv()[connName] = nil
@@ -100,7 +99,7 @@ local camera = Workspace.CurrentCamera
 local Death = false
 local AimPart = "HumanoidRootPart"
 local Epitaph = 0.187
-local HeadOffset = Vector3.new(0, 2.75, 0)
+local HeadOffset = Vector3.new(0, 2.5, 0)
 local FOVRadius = 200
 local screenOffset = Vector2.new(0, -25) -- aim higher for crosshair correction
 local flyingSpeed = 100
