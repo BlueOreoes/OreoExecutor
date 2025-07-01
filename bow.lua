@@ -1,4 +1,5 @@
 -- Multi-Execution Cleanup
+wait(5)
 for _, connName in pairs({
 	"AimLockLoop", "AimLockInputStart", "AimLockInputEnd",
 	"ArrowInputStart", "ArrowInputEnd", "ESPUpdateLoop",
@@ -10,7 +11,15 @@ for _, connName in pairs({
 	end
 end
 
-
+function missing(t, f, fallback)
+    if type(f) == t then return f end
+    return fallback
+end
+local Players = game:GetService("Players")
+local LP = Players.LocalPlayer
+queueteleport =  missing("function", queue_on_teleport or (syn and syn.queue_on_teleport) or (fluxus and fluxus.queue_on_teleport))
+queueteleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/BlueOreoes/OreoExecutor/refs/heads/main/bow.lua'))()")
+LP.CameraMode = Enum.CameraMode.LockFirstPerson
 -- start on join
 local Players = game:GetService("Players")
 local plr = Players.LocalPlayer
@@ -64,16 +73,11 @@ local function stepForwardAndJump()
         task.wait(0.1)
         humanoid.Health = 0 -- kill the player
     end
-    task.spawn(function()
-    	repeat task.wait() until LP.Character and LP.Character:FindFirstChild("Humanoid")
-    	
-    	-- Force first person
-    	LP.CameraMode = Enum.CameraMode.LockFirstPerson
-    end)
-    queueteleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/BlueOreoes/OreoExecutor/refs/heads/main/bow.lua'))()")
+    
+    
+
 end
 stepForwardAndJump()
-
 if getgenv().ESPObjects then
 	for _, obj in pairs(getgenv().ESPObjects) do
 		obj:Remove()
