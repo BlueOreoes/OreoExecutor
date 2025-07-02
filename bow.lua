@@ -551,4 +551,5 @@ pcall(function()
 		Text = "ESP + AimLock + Flying + Noclip integrated!",
 		Duration = 5
 	})
+	end)
 end)
