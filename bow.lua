@@ -46,7 +46,7 @@ local function stepForwardAndJump()
     local char = plr.Character or plr.CharacterAdded:Wait()
     local hrp = char:WaitForChild("HumanoidRootPart")
     local humanoid = char:FindFirstChildOfClass("Humanoid")
-
+    
     -- Fully unsit by removing seat welds
     for _, v in pairs(char:GetDescendants()) do
         if v:IsA("Weld") or v:IsA("Motor6D") then
@@ -57,6 +57,10 @@ local function stepForwardAndJump()
     end
     if humanoid then
         humanoid.Sit = false
+    end
+    
+    if hrp then
+    	hrp.CFrame = CFrame.new(hrp.Position) * CFrame.Angles(0, math.rad(90), 0)
     end
 
     -- Walk forward in steps
