@@ -59,9 +59,9 @@ local function stepForwardAndJump()
         humanoid.Sit = false
     end
     
-    if hrp then
-    	hrp.CFrame = CFrame.new(hrp.Position) * CFrame.Angles(0, math.rad(90), 0)
-    end
+if hrp then
+	hrp.CFrame = CFrame.new(hrp.Position) * CFrame.Angles(0, math.rad(90), 0)
+end
 
     -- Walk forward in steps
     local duration = 3
@@ -264,16 +264,8 @@ getgenv().AimLockLoop = RunService.RenderStepped:Connect(function()
 	if isHoldingRightClick then
 		if not isValidTarget(lockedTarget) then
             lockedTarget = getClosestPlayer()
-            lastTarget = lockedTarget
-            targetStartTime = tick()
-        elseif lockedTarget ~= lastTarget then
-            lastTarget = lockedTarget
-            targetStartTime = tick()
-        elseif tick() - targetStartTime >= 20 then
-            -- Kill local player if locked ta//rame.lookAt(camera.CFrame.Position, ray.Origin + ray.Direction * 100)
-    			UIS.MouseBehavior = Enum.MouseBehavior.LockCenter
-    		end
-    	end
+        end
+
     
     if isHoldingRightClick and not lockedTarget then
         print("hi")
