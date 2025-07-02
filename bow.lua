@@ -318,7 +318,7 @@ getgenv().AimLockLoop = RunService.RenderStepped:Connect(function()
     else
         game:GetService("ReplicatedStorage").RemoteEvents.EquipBow:FireServer()
     end
-end)
+end
 
 -- Flying Functions
 local function startFlying()
