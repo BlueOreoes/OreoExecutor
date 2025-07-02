@@ -227,9 +227,8 @@ end
 if lockedTarget and isValidTarget(lockedTarget) then
 	local distance = (camera.CFrame.Position - lockedTarget.Character[AimPart].Position).Magnitude
 	if distance > 1500 then
-		local servers = HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/"..game.PlaceId.."/servers/Public?sortOrder=Desc&limit=100")).data
-		for _, s in ipairs(servers) do
-            TPService:TeleportToPlaceInstance(game.PlaceId, s.id, LP)
+		if humanoid then
+            humanoid.Health = 0 -- kill the player
         end
 	end
 end
