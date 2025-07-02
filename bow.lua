@@ -263,9 +263,20 @@ end
 getgenv().AimLockLoop = RunService.RenderStepped:Connect(function()
 	if isHoldingRightClick then
 		if not isValidTarget(lockedTarget) then
-            lockedTarget = getClosestPlayer()
-        end
+			lockedTarget = getClosestPlayer()
+			
+		end
 
+		if lockedTarget and lockedTarget.Character and lockedTarget.Character:FindFirstChild(AimPart) then
+			local root = lockedTarget.Character[AimPart]
+			local predicted = root.Position + root.Velocity * Epitaph + HeadOffset
+			local screenPos = camera:WorldToViewportPoint(predicted)
+			local aimPoint = Vector2.new(screenPos.X, screenPos.Y) + screenOffset
+			local ray = camera:ViewportPointToRay(aimPoint.X, aimPoint.Y)
+			camera.CFrame = CFrame.lookAt(camera.CFrame.Position, ray.Origin + ray.Direction * 100)
+			UIS.MouseBehavior = Enum.MouseBehavior.LockCenter
+		end
+	end
     
     if isHoldingRightClick and not lockedTarget then
         print("hi")
@@ -318,7 +329,8 @@ getgenv().AimLockLoop = RunService.RenderStepped:Connect(function()
     else
         game:GetService("ReplicatedStorage").RemoteEvents.EquipBow:FireServer()
     end
-end
+end)
+
 
 -- Flying Functions
 local function startFlying()
@@ -551,5 +563,4 @@ pcall(function()
 		Text = "ESP + AimLock + Flying + Noclip integrated!",
 		Duration = 5
 	})
-	end)
 end)
