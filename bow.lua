@@ -228,7 +228,9 @@ if lockedTarget and isValidTarget(lockedTarget) then
 	local distance = (camera.CFrame.Position - lockedTarget.Character[AimPart].Position).Magnitude
 	if distance > 1500 then
 		local servers = HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/"..game.PlaceId.."/servers/Public?sortOrder=Desc&limit=100")).data
-		task.spawn(function() task.wait(1) local h,g,p=game:GetService("HttpService"),game:GetService("TeleportService"),game.Players.LocalPlayer local s,c=pcall(function() return h:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/"..game.PlaceId.."/servers/Public?sortOrder=Desc&limit=100")).data end) if s and c then for _,v in ipairs(c) do if v.playing < v.maxPlayers and v.id ~= game.JobId then pcall(function() pcall(function() g:TeleportToPlaceInstance(game.PlaceId,v.id,p) end) end) break end end end end)
+		for _, s in ipairs(servers) do
+            TPService:TeleportToPlaceInstance(game.PlaceId, s.id, LP)
+        end
 	end
 end
 
