@@ -259,17 +259,17 @@ end
 getgenv().AimLockLoop = RunService.RenderStepped:Connect(function()
 	if isHoldingRightClick then
 		if not isValidTarget(lockedTarget) then
-        lockedTarget = getClosestPlayer()
-        lastTarget = lockedTarget
-        targetStartTime = tick()
-    elseif lockedTarget ~= lastTarget then
-        lastTarget = lockedTarget
-        targetStartTime = tick()
-    elseif tick() - targetStartTime >= 20 then
-        -- Kill local player if locked ta//rame.lookAt(camera.CFrame.Position, ray.Origin + ray.Direction * 100)
-			UIS.MouseBehavior = Enum.MouseBehavior.LockCenter
-		end
-	end
+            lockedTarget = getClosestPlayer()
+            lastTarget = lockedTarget
+            targetStartTime = tick()
+        elseif lockedTarget ~= lastTarget then
+            lastTarget = lockedTarget
+            targetStartTime = tick()
+        elseif tick() - targetStartTime >= 20 then
+            -- Kill local player if locked ta//rame.lookAt(camera.CFrame.Position, ray.Origin + ray.Direction * 100)
+    			UIS.MouseBehavior = Enum.MouseBehavior.LockCenter
+    		end
+    	end
     
     if isHoldingRightClick and not lockedTarget then
         print("hi")
